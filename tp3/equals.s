@@ -11,12 +11,13 @@ matrix_equals_asm:
 	##    movl 8(%ebp), %ebx	#id1
 	
 	movl $0, -4(%ebp)	#r
-	movl $0, -8(%ebp)	#c
 
 for1:
 	movl 16(%ebp), %ebx	#mo
 	movl -4(%ebp), %esi	#r
-	add $1, -4(%ebp)	#++r
+	
+
+	movl $0, -8(%ebp)	#c
 
 	cmp %esi, %ebx		#on rentre dans le 2eme for si matorder-r > 0
 	ja for2
@@ -26,10 +27,12 @@ for1:
 for2:
 	movl 16(%ebp), %ebx	#mo
 	movl -8(%ebp), %esi	#c
-	add $1, -8(%ebp)	#++c
+	
 
 	cmp %esi, %ebx		#on rentre dans le if si matorder-c > 0
 	ja if
+
+	add $1, -4(%ebp)	#++r
 	jmp for1		#sinon on retourne dans le 1er for
 	
 if:
@@ -47,6 +50,7 @@ if:
 	movl (%ecx, %esi, 4), %esi
 	cmp %edi, %esi
 	jne retour0		#si les deux contenu sont diff, on return 0
+	add $1, -8(%ebp)	#++c
 	jmp for2		#sinon on retourne dans 1eme for
 	
 retour1:
