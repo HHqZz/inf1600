@@ -8,28 +8,16 @@ _ZNK9CTriangle9HeightAsmEv:
         mov %esp, %ebp /* set ebp to current esp */
         
         /* Write your solution here */
-	movl 8(%ebp), %ebx	#on recup ladresse de lobjet	
 
-	fld factor	#st[0]=2.0
-	fld 12(%eax)	#st[0]=ms{2} --------------- st[1]=2.0
-	fdivrp
-
-	call _ZNK9CTriangle12PerimeterAsmEv
-	
-
-	/*push %ebx
-
-	movl 8(%ebp), %ebx	#on recup ladresse de lobjet
-	fld 20(%ebx)		#on prend l etiquette du negro
-	
-
-
-	call _ZNK9CTriangle7AreaAsmEv	
+	movl 8(%ebp), %eax	#on recup ladresse de lobjet
+	push %eax		#
+	movl (%eax), %eax	#on rentre dans la table
+	call *16(%eax)		#on choisis la bonne fonction
 
 	fld factor	#st[0]=2.0 ----------------- st[1]=AreaCpp()
 	fmulp		#st[0]=2.0*AreaCpp() ------- st[1]=2.0*AreaCpp()
 	fld 12(%eax)	#st[0]=ms{2} --------------- st[1]=2.0*AreaCpp()
-	fdivrp*/
+	fdivrp
 
 
         leave          /* restore ebp and esp */

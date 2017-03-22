@@ -15,7 +15,6 @@ _ZNK9CTriangle7AreaAsmEv:
 	
 	call _ZNK9CTriangle12PerimeterAsmEv
 
-	
 
 	fld factor		#st[0]=2.0 ----------------- st[1]=PermietreCpp()
 	fdivrp			#st[0]=PermietreCpp()/2.0 -- st[1]=idem
