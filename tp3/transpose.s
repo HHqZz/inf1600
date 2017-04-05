@@ -1,80 +1,66 @@
-.data
-	r : .int 0
-	c : .int 0
-
-.global matrix_transpose_asm
+.globl matrix_transpose_asm
 
 matrix_transpose_asm:
-
-        push %ebp      # Save old base pointer 
-        mov %esp, %ebp # Set ebp to current esp 
-
-	#Cette fonction permet de faire la transposée de la matrice en entrée
-
-
-	push %esi				#On empile les registres utilisés
-	push %edi
-	push %ecx
-	push %edx
-	push %eax
-
-	mov c, %edi
-	mov r, %esi
-
-
-  Test_pour_r: 
-	
-	mov 16(%ebp), %eax    #matorder -> eax
-	cmp %esi, %eax        #eax - esi > 0 ?
-	ja Test_pour_c	      #Tant que r < matorder : effectuer la boucle pour c
-	jmp Fin	              #Sinon quand boucle finie : retourner à la fonction appelante
+        push %ebp      /* save old base pointer */
+        mov %esp, %ebp /* set ebp to current esp */
+        
+        /* Write your solution here */
+        ##    movl 16(%ebp), %edx	#mo
+	##    movl 12(%ebp), %ecx	#od
+	##    movl 8(%ebp), %ebx	#id1
+	push -4(%ebp)
+	push -8(%ebp)
+	movl $0, -4(%ebp)	#r
 	
 
-
-  Test_pour_c:								
-	
-	mov 16(%ebp), %eax		#matorder -> eax
-	cmp %edi, %eax			#eax - edi > 0
-	ja Boucle_transpose		#Tant que c < matorder : effectuer la boucle pour transposer
-	
-	inc %esi			#Sinon quand boucle finie : incrémenter r
-	mov $0, %edi			#et on remet c à 0
-	jmp Test_pour_r			#Puis on retourne à la boucle pour tester r
-	 
+for1:
+	mov 16(%ebp), %ebx	#mo
+	mov -4(%ebp), %esi	#r
 	
 	
-  Boucle_transpose:
+	movl $0, -8(%ebp)	#c
+
+	cmp %esi, %ebx		#on rentre dans le 2eme for si matorder-r > 0
+	ja for2
+	jmp quit		#si la condition pas rempli on quitte le mini prog
+
+for2:
+	mov 16(%ebp), %ebx	#mo
+	mov -8(%ebp), %esi	#c
 	
-	#Rercher de l'élément dans la matrice en entrée
-	mov 16(%ebp), %eax		#matorder -> eax
-	imul %esi, %eax			#eax = r*matorder
-	add %edi, %eax			#eax = matorder*r + c
 
-	mov 8(%ebp), %ecx	        #On récupère la matrice en entrée Inmatdata
-	mov (%ecx, %eax, 4), %ecx	#ecx = élément à l'indice eax de Inmatdata (en sautant 4octets)
+	cmp %esi, %ebx		#on rentre dans le for2 si matorder-c > 0
+	ja calcul
 
+	addl $1, -4(%ebp)	#++r
+	jmp for1
+
+calcul:
+	mov 16(%ebp), %ecx	#mo
+	mov 8(%ebp), %edx	#id1
+	mov -4(%ebp), %esi	#r
+	mov -8(%ebp), %edi	#c
 	
-	#Copie de cet l'élément dans la matrice en sortie en inversant la ligne et la colonne
-	mov 16(%ebp), %eax		#matorder -> eax
-	imul %edi, %eax			#eax = c*matorder  
-	add %esi, %eax			#eax = matorder*c + r
+	imul %ecx, %edi		#c*mo
+	add %esi, %edi		#r+c*mo
 	
-	mov 12(%ebp), %edx		#On récupère la matrice en sortie Outmatdata
-	mov %ecx, (%edx, %eax, 4)	#Élément à l'indice eax de Outmatdata (en sautant 4octets)=ecx	
+	mov (%edx, %edi, 4), %edx	#on recup les contenu de l'adresses de id1, on 
+					#multiplie par 4, car int=4octets
 
-	inc %edi                        # On incrémente c de 1
-	jmp Test_pour_c
+	mov 16(%ebp), %ebx	#mo
+	mov 12(%ebp), %ecx	#od
+	mov -4(%ebp), %esi	#r
+	mov -8(%ebp), %edi	#c
 
+	imul %ebx, %esi		#r*matorder
+	add %edi, %esi		#c+r*matorder
 
+	mov %edx, (%ecx, %esi, 4)	#on deplace contenu id1, dans od
 
+	addl $1, -8(%ebp)	#++c
 
-  Fin:
-	pop %esi			#On désempile les registres utilisés
-	pop %edi
-	pop %ecx
-	pop %edx
-	pop %eax
-	
-	leave			  # restore ebp and esp
-	ret		          # return to the caller
+	jmp for2
 
+quit:
+        leave          /* restore ebp and esp */
+        ret            /* return to the caller */
