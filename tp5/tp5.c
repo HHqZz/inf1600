@@ -7,22 +7,22 @@ unsigned int Decryption_fct(unsigned int le)
 
 	/*
 	 * Remplacez le code suivant par de l'assembleur en ligne
-	 * en utilisant le moins d'instructions possible*/
+	 * en utilisant le moins d'instructions possible
 	 
-	 be = (le & 0xff000000) | (le&0xff) << 16  | (le & 0xff00) | (le & 0xff0000) >> 16;
+	 be = (le & 0xff000000) | (le&0xff) << 16  | (le & 0xff00) | (le & 0xff0000) >> 16;*/
+     
 	 
-	
-
-	asm volatile (
-		// instructions...
-        movl le, %ebx;              # la valeur de le dans ebx
-        movl $0xff00ff00, %ecx;     # la valeur dans ecx
-        xchg 
-        
-		: "=be" (be)// sorties (s'il y a lieu)
-		: "le" (le)// entrées
-		: "%ebx", "%ecx", "%edx"// registres modifiés (s'il y a lieu)
-	);
+	asm volatile
+	( 
+            "movl %1, %0;"      // On prend la valeur de 'le' et on la met dans 'be'
+			"rol $8, %0;"		// Les huit premiers bits sont places dans le meme
+                                // ordre a la fin
+		  	"bswap %0;"		    // On inverse les octets
+            
+		 	: "=r"(be)		    // Sorties 
+		 	: "r"(le)    		// Entrées
+		 	: 		 	        // Registres modifiés (Pas de registre modifié)
+    );
 
 	return be;
 }
@@ -39,5 +39,3 @@ int main()
 	return 0;
 }
 
-
-// shift 16 = */2⁴   OU SHL registre, valeur      AND qqch, 0xff000000  qqch(le)
